@@ -22,7 +22,7 @@ var uiController = (function () {
   return {
     getInput: function () {
       return {
-        type: document.querySelector(DOMstrings.inputType).value,
+        type: document.querySelector(DOMstrings.inputType).value, //exp, inc
         description: document.querySelector(DOMstrings.inputDescription).value,
         value: document.querySelector(DOMstrings.inputValue).value,
       };
@@ -36,20 +36,23 @@ var uiController = (function () {
 
 // Sanhuutei ajillah control
 var financeController = (function () {
+  // private data
   var Income = function (id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
 
+  // private data
   var Expence = function (id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
 
+  // private data
   var data = {
-    allItems: {
+    items: {
       inc: [],
       exp: [],
     },
@@ -59,14 +62,40 @@ var financeController = (function () {
       exp: 0,
     },
   };
+
+  return {
+    addItem: function (type, desc, val) {
+      var item, id;
+
+      /* identification */
+      if (data.items[type].length === 0) id = 1;
+      else {
+        id = data.items[type][data.items[type].length - 1].id + 1;
+      }
+
+      if (type === "inc") {
+        item = new Income(id, desc, val);
+      } else {
+        /* type === 'exp' */
+        item = new Expence(id, desc, val);
+      }
+
+      data.items[type].push(item);
+    },
+
+    seeData: function () {
+      return data;
+    },
+  };
 })();
 
 // Programm holbogch control
 var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. Oruulah ogogdliig delgetsees olj avna
-    console.log(uiController.getInput());
+    var input = uiController.getInput();
     // 2. Olj avsan ogogluudee sanhuugiin controlld damjuulj tend haragdana.
+    financeController.addItem(input.type, input.description, input.value);
     // 3. Olj avsan ogogdluudee web deeree tohiroh heseg deer haruulna
     // 4. Tusviig tootsoolno
     // 5. Etssiin uldegdel, tootsoog delgetsend gargana
