@@ -31,6 +31,43 @@ var uiController = (function () {
     getDOMstrings: function () {
       return DOMstrings;
     },
+
+    addListItem: function (item, type) {
+      // Orlogo zarlagiin elementiin aguulsan html-iig beltgene.
+      var html, list;
+      if (type === "inc") {
+        list = ".income__list";
+        html = `<div class="item clearfix" id="income-%id%">
+                  <div class="item__description">$$desc$$</div>
+                  <div class="right clearfix">
+                    <div class="item__value">$val$</div>
+                    <div class="item__delete">
+                      <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                    </div>
+                  </div>
+                </div>`;
+      } else {
+        list = ".expenses__list";
+        html = `<div class="item clearfix" id="expense-%id%">
+                  <div class="item__description">$$desc$$</div>
+                  <div class="right clearfix">
+                    <div class="item__value">$val$</div>
+                    <div class="item__percentage">21%</div>
+                    <div class="item__delete">
+                      <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                    </div>
+                  </div>
+                </div>`;
+      }
+
+      // Ter HTML dotroo orlogo zarlaga utguudiig Replace ashilan oorchilj ogno.
+      html = html.replace("%id%", item.id);
+      html = html.replace("$$desc$$", item.description);
+      html = html.replace("$val$", item.value);
+
+      // Beltgesen HTML ee DOM ruu hiij ogno.
+      document.querySelector(list).insertAdjacentHTML("beforeend", html);
+    },
   };
 })();
 
@@ -81,6 +118,8 @@ var financeController = (function () {
       }
 
       data.items[type].push(item);
+
+      return item;
     },
 
     seeData: function () {
@@ -94,9 +133,16 @@ var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. Oruulah ogogdliig delgetsees olj avna
     var input = uiController.getInput();
+
     // 2. Olj avsan ogogluudee sanhuugiin controlld damjuulj tend haragdana.
-    financeController.addItem(input.type, input.description, input.value);
+    var item = financeController.addItem(
+      input.type,
+      input.description,
+      input.value
+    );
+
     // 3. Olj avsan ogogdluudee web deeree tohiroh heseg deer haruulna
+    uiController.addListItem(item, input.type);
     // 4. Tusviig tootsoolno
     // 5. Etssiin uldegdel, tootsoog delgetsend gargana
   };
